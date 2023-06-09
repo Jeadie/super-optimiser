@@ -43,7 +43,7 @@ cli optimal --max-length 5 --max-mem-cells 4 --max-val 5 --state 3 2 4 1
 ```
 
 ### Benchmarking
-Benchmarking exists as a separate target. It is not CLI friendly yet, but can be found in [here](src/benchmark.rs)/
+Benchmarking exists as a separate target. It is not CLI friendly yet, but can be found in [here](src/benchmark.rs).
 
 ## Contribution Guidelines
 All contributors are welcome. Whether you're fixing bugs, improving the documentation, or proposing and implementing new features, we appreciate your efforts. Please see the [CONTRIBUTING.md](./CONTRIBUTING.md) file for more detailed information.
