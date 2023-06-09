@@ -14,8 +14,7 @@ impl CPU {
         }
     }
 
-    pub fn execute(&mut self, program: &[Instruction], debug: bool) -> Vec<u32> {
-        if debug {println!("{:?}", self.state)}
+    pub fn execute(&mut self, program: &[Instruction]) -> Vec<u32> {
         for instruction in program {
             match instruction {
                 Instruction::Load(val) => self.load(*val),
@@ -23,7 +22,6 @@ impl CPU {
                 Instruction::Xor(mem1, mem2) => self.xor(*mem1, *mem2),
                 Instruction::Inc(mem) => self.inc(*mem),
             }
-            if debug {println!("inst={:?}, state={:?}", instruction, self.state)}
         }
         return self.state.clone();
     }

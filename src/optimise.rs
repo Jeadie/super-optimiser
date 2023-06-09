@@ -9,7 +9,7 @@ pub fn optimal_from_code(assembly: &str, max_length: usize, max_mem: usize, max_
     let mut cpu = CPU::new(max_mem);
     match assemble::parse(assembly) {
         Ok(program) => {
-            let state = cpu.execute(&program, debug);
+            let state = cpu.execute(&program);
             println!("***Source***\n{}", assembly);
             optimal_from_state(state, max_length, max_val, debug);
         },
@@ -24,13 +24,13 @@ pub fn optimal_from_state(state: Vec<u32>, max_length: usize, max_val: u32, debu
     match opt.search(max_length, max_mem, max_val, state, debug) {
         Some(shortest_program) => {
             let disassembly = assemble::output(&shortest_program);
-            println!("***Optimal***\n{}\n{}", disassembly, "=".repeat(20));
+            println!("***Optimal***\n{}\n{}\n", disassembly, "=".repeat(20));
         },
         None => println!("No optimal solution found."),
     }
 }
 
-fn multi_cartesian_product<T: Clone>(sets: Vec<Vec<T>>) -> Vec<Vec<T>> {
+pub fn multi_cartesian_product<T: Clone>(sets: Vec<Vec<T>>) -> Vec<Vec<T>> {
     match sets.split_first() {
         Some((first, rest)) => {
             let rest_product = multi_cartesian_product(rest.to_vec());
@@ -75,12 +75,12 @@ impl Superoptimizer {
                         }
                         Instruction::Swap(_, _) => {
                             arg_sets.push(Vec::from_iter((0..=max_mem - 1).flat_map(|a| {
-                                (a+1..=max_mem - 1).map(move |b| Instruction::Swap(a.try_into().unwrap(), b.try_into().unwrap()))
+                                (0..=max_mem - 1).map(move |b| Instruction::Swap(a.try_into().unwrap(), b.try_into().unwrap()))
                             }).collect::<Vec<Instruction>>()));
                         }
                         Instruction::Xor(_, _) => {
                             arg_sets.push(Vec::from_iter((0..=max_mem - 1).flat_map(|a| {
-                                (a+1..=max_mem - 1).map(move |b| Instruction::Xor(a.try_into().unwrap(), b.try_into().unwrap()))
+                                (0..=max_mem - 1).map(move |b| Instruction::Xor(a.try_into().unwrap(), b.try_into().unwrap()))
                             }).collect::<Vec<Instruction>>()));
                         }
                         Instruction::Inc(_) => {
@@ -95,7 +95,6 @@ impl Superoptimizer {
         }
     programs
 }
-
     // Helper function to generate permutations of instructions
     fn permute(instructions: Vec<Instruction>, length: usize) -> Vec<Program> {
         if length == 0 {
@@ -118,12 +117,8 @@ impl Superoptimizer {
         let mut count = 0;
         for program in self.generate_programs(max_length, max_mem, max_val) {
             let mut cpu = CPU::new(max_mem);
-            let state = cpu.execute(&program, debug);
+            let state = cpu.execute(&program);
             if state == target_state {
-                
-                if program.len() < 4 {
-                    println!("{:?}", program);
-                }
                 let state = state.clone();
                 if !self.program_cache.contains_key(&state) || program.len() < self.program_cache[&state].len() {
                     self.program_cache.insert(state, program);
@@ -140,7 +135,6 @@ impl Superoptimizer {
                 }
             }
         }
-
         self.program_cache.get(&target_state).cloned()
     }
 }
