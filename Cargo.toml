@@ -9,3 +9,13 @@ edition = "2021"
 regex = "1"
 csv = "1.1.6"
 rand = "0.8.4"
+structopt = "0.3"
+
+
+[[bin]]
+name = "benchmark"
+path = "src/benchmark.rs"
+
+[[bin]]
+name = "cli"
+path = "src/main.rs"
