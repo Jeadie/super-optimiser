@@ -2,32 +2,25 @@ use std::collections::HashMap;
 
 use crate::cpu::CPU;
 use crate::assemble;
-use crate::instruction::{Instruction, Program};
+use crate::instruction::{Instruction, Program, ParseInstructionError};
 
 
-pub fn optimal_from_code(assembly: &str, max_length: usize, max_mem: usize, max_val: u32, debug: bool) {
+pub fn optimal_from_code(assembly: &str, max_length: usize, max_mem: usize, max_val: u32, debug: bool) -> Result<Option<Program>, ParseInstructionError> {
     let mut cpu = CPU::new(max_mem);
     match assemble::parse(assembly) {
         Ok(program) => {
             let state = cpu.execute(&program);
             println!("***Source***\n{}", assembly);
-            optimal_from_state(state, max_length, max_val, debug);
+            Result::Ok(optimal_from_state(state, max_length, max_val, debug))
         },
-        Err(err) => println!("Error parsing program: {:?}", err),
+        Err(err) => Result::Err(err)
     }
 }
 
-pub fn optimal_from_state(state: Vec<u32>, max_length: usize, max_val: u32, debug: bool) {
+pub fn optimal_from_state(state: Vec<u32>, max_length: usize, max_val: u32, debug: bool) -> Option<Program> {
     let max_mem = state.len();
-    // println!("***State***\n{:?}\n", state);
     let mut opt = Superoptimizer::new();
-    match opt.search(max_length, max_mem, max_val, state, debug) {
-        Some(shortest_program) => {
-            let disassembly = assemble::output(&shortest_program);
-            // println!("***Optimal***\n{}\n{}\n", disassembly, "=".repeat(20));
-        },
-        None => (), //println!("No optimal solution found."),
-    }
+    opt.search(max_length, max_mem, max_val, state, debug)
 }
 
 pub fn multi_cartesian_product<T: Clone>(sets: Vec<Vec<T>>) -> Vec<Vec<T>> {
