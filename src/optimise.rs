@@ -19,14 +19,14 @@ pub fn optimal_from_code(assembly: &str, max_length: usize, max_mem: usize, max_
 
 pub fn optimal_from_state(state: Vec<u32>, max_length: usize, max_val: u32, debug: bool) {
     let max_mem = state.len();
-    println!("***State***\n{:?}\n", state);
+    // println!("***State***\n{:?}\n", state);
     let mut opt = Superoptimizer::new();
     match opt.search(max_length, max_mem, max_val, state, debug) {
         Some(shortest_program) => {
             let disassembly = assemble::output(&shortest_program);
-            println!("***Optimal***\n{}\n{}\n", disassembly, "=".repeat(20));
+            // println!("***Optimal***\n{}\n{}\n", disassembly, "=".repeat(20));
         },
-        None => println!("No optimal solution found."),
+        None => (), //println!("No optimal solution found."),
     }
 }
 
