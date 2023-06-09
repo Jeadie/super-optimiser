@@ -10,7 +10,6 @@ pub fn optimal_from_code(assembly: &str, max_length: usize, max_mem: usize, max_
     match assemble::parse(assembly) {
         Ok(program) => {
             let state = cpu.execute(&program);
-            println!("***Source***\n{}", assembly);
             Result::Ok(optimal_from_state(state, max_length, max_val, debug))
         },
         Err(err) => Result::Err(err)
